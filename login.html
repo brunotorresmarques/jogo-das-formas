@@ -1,1 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Jogo das Formas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: #fff;
+      padding: 32px 24px 24px 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 24px 0 rgba(0,0,0,.11);
+      min-width: 320px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+    }
+    .login-container h1 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 2rem;
+      color: #0c344b;
+    }
+    .login-container img {
+      width: 80px;
+      margin-bottom: 16px;
+    }
+    .login-container label {
+      display: block;
+      text-align: left;
+      margin-bottom: 4px;
+      margin-top: 18px;
+      font-weight: 500;
+      color: #333;
+    }
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      border: 1px solid #b4c2cc;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .login-container input[type="text"]:focus,
+    .login-container input[type="password"]:focus {
+      border-color: #54b6ff;
+    }
+    .login-container button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px 0;
+      background: #54b6ff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-container button:hover {
+      background: #1c88d7;
+    }
+    .login-container .register-link {
+      display: block;
+      margin-top: 18px;
+      font-size: 0.98rem;
+      color: #1c88d7;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .login-container .register-link:hover {
+      color: #0c344b;
+    }
+    .login-container .error-message {
+      color: #e12d39;
+      margin-top: 8px;
+      margin-bottom: -8px;
+      font-size: 0.96rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="https://img.icons8.com/color/96/shape.png" alt="Jogo das Formas Logo">
+    <h1>Entrar</h1>
+    <form id="loginForm" autocomplete="off">
+      <label for="username">Usuário</label>
+      <input type="text" id="username" name="username" placeholder="Seu usuário" required autofocus>
 
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password" placeholder="Sua senha" required>
+      
+      <div class="error-message" id="loginError" style="display:none;"></div>
+      
+      <button type="submit">Entrar</button>
+    </form>
+    <a class="register-link" href="#">Não tem uma conta? Cadastre-se</a>
+  </div>
+  <script>
+    // Exemplo simples de validação de login
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+      const errorDiv = document.getElementById('loginError');
+      // Simulação de login, troque para sua lógica real
+      if (user === '' || pass === '') {
+        errorDiv.textContent = "Preencha todos os campos.";
+        errorDiv.style.display = 'block';
+      } else if (user === 'admin' && pass === 'admin') {
+        window.location.href = 'index.html';
+      } else {
+        errorDiv.textContent = "Usuário ou senha inválidos.";
+        errorDiv.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
