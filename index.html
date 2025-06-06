@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo das Formas</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            background-color: #2c3e50; /* Cor de fundo escura para reduzir o brilho */
+            margin: 0;
+            padding: 20px;
+            color: #ecf0f1; /* Cor clara para contraste com o fundo escuro */
+        }
+
+        h1 {
+            color: #e74c3c; /* Cor vermelha vibrante para o título */
+            font-size: 2.5em;
+        }
+
+        #game {
+            margin: 20px auto;
+            width: 300px;
+            background-color: #34495e; /* Fundo escuro para o contêiner do jogo */
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Sombra mais pronunciada */
+            position: relative;
+        }
+
+        #shape {
+            
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            margin-top: 20%;
+            margin-bottom: 10%;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #1abc9c; /* Azul turquesa vibrante */
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #16a085; /* Azul turquesa mais escuro ao passar o mouse */
+        }
+
+        #message {
+            font-size: 18px;
+            color: #f39c12; /* Cor amarela vibrante para mensagens */
+        }
+
+        #score {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e74c3c; /* Cor vermelha vibrante para pontuação */
+        }
+
+        #options button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        #hearts {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+        }
+
+        .heart {
+            font-size: 24px;
+            color: #e74c3c; /* Cor vermelha para corações ativos */
+            margin: 0 5px;
+        }
+
+        .heart.inactive {
+            color: #7f8c8d; /* Cor cinza para corações inativos */
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo das Formas</h1>
+    <p>Adivinhe o nome da forma geométrica!</p>
+    <div id="game">
+        <div id="hearts"></div>
+        <div id="shape"></div>
+        <div id="options"></div>
+        <p id="message"></p>
+        <p>Pontuação: <span id="score">0</span></p>
+    </div>
+
+    <script>
+        let shapes = [
+            { name: 'círculo', style: 'border-radius: 50%; background-color: #FF5733;' },
+            { name: 'quadrado', style: 'background-color: #33FF57;' },
+            { name: 'triângulo', style: 'width: 0; height: 0; border-left: 75px solid transparent; border-right: 75px solid transparent; border-bottom: 150px solid #3357FF;' },
+            { name: 'retângulo', style: 'background-color: #FF33A6; width: 200px; height: 100px;' },
+            { name: 'oval', style: 'border-radius: 50%; background-color: #FF8C33; width: 150px; height: 100px;' },
+            { name: 'estrela', style: 'background-color: #FFEB33; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);' },
+            { name: 'losango', style: 'background-color: #33FFF0; width: 150px; height: 150px; transform: rotate(45deg);' },
+            { name: 'hexágono', style: 'background-color: #800080; clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);' },
+            { name: 'pentágono', style: 'background-color: #FFD700; clip-path: polygon(50% 0%, 100% 38%, 81% 100%, 19% 100%, 0% 38%);' },
+            { name: 'paralelogramo', style: 'background-color: #00FFFF; width: 150px; height: 100px; transform: skew(20deg);' }
+        ];
+
+        let currentShapeIndex = 0;
+        let lives = 3;
+        let score = 0;
+
+        function updateHearts() {
+            const heartsDiv = document.getElementById('hearts');
+            heartsDiv.innerHTML = '';
+            for (let i = 1; i <= lives; i++) {
+                const heart = document.createElement('span');
+                heart.className = 'heart';
+                heart.textContent = '❤️';
+                if (i > lives) {
+                    heart.classList.add('inactive');
+                }
+                heartsDiv.appendChild(heart);
+            }
+        }
+
+        function showShape() {
+            const shapeDiv = document.getElementById('shape');
+            const optionsDiv = document.getElementById('options');
+
+            currentShapeIndex = Math.floor(Math.random() * shapes.length);
+            const currentShape = shapes[currentShapeIndex];
+
+            shapeDiv.style = currentShape.style;
+
+            const options = [currentShape.name];
+
+            while (options.length < 3) {
+                const randomOption = shapes[Math.floor(Math.random() * shapes.length)].name;
+                if (!options.includes(randomOption)) {
+                    options.push(randomOption);
+                }
+            }
+
+            shuffleArray(options);
+
+            optionsDiv.innerHTML = '';
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsDiv.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            let message = document.getElementById('message');
+
+            if (selectedOption === shapes[currentShapeIndex].name) {
+                score++;
+                message.textContent = 'Correto! Avançando...';
+                document.getElementById('score').textContent = score;
+            } else {
+                lives--;
+                updateHearts();
+                message.textContent = 'Errado! Tente novamente.';
+            }
+
+            if (lives === 0) {
+                message.textContent = `Fim de jogo! Sua pontuação: ${score}`;
+                document.getElementById('game').innerHTML = `
+                    <p>Sua pontuação: ${score}</p>
+                    <button onclick="restartGame()">Jogar Novamente</button>
+                `;
+            } else {
+                showShape();
+            }
+        }
+
+        function restartGame() {
+            lives = 3;
+            score = 0;
+            document.getElementById('game').innerHTML = `
+                <div id="hearts"></div>
+                <div id="shape"></div>
+                <div id="options"></div>
+                <p id="message"></p>
+                <p>Pontuação: <span id="score">0</span></p>
+            `;
+            updateHearts();
+            showShape();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        window.onload = function() {
+            updateHearts();
+            showShape();
+        }
+    </script>
+</body>
+</html>
